@@ -1,0 +1,39 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: on-failure
+    environment:
+      - POSTGRES_DB=mui-demo
+      - POSTGRES_USER=yuriko
+      - POSTGRES_PASSWORD=foo
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - '5432:5432'
+  rails:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mui-backend:latest
+    tty: true
+    stdin_open: true
+    restart: on-failure
+    environment:
+      - RAILS_ENV=development
+      - APPLICATION_TYPE=mui-backend
+      - RAILS_LOG_TO_STDOUT=true
+      - DB_NAME=mui-demo
+      - DB_URL=db
+      - DB_USERNAME=yuriko
+      - DB_PASSWORD=foo
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app:z
+    depends_on:
+      - db
+
+volumes:
+  db_data:
