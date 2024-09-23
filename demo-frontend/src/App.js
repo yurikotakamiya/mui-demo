@@ -1,7 +1,21 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useEffect, useState } from 'react';
+import { API_URL } from './constants';
+import axios from 'axios';
 
-function App() {
+const App = () => {
+  const [backendData, setBackendData] = useState(null);
+
+  useEffect(() => {
+    axios.get(`${API_URL}/test`)
+      .then(response => {
+        setBackendData(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+  }, []);
   return (
     <div className="App">
       <header className="App-header">
